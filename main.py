@@ -26,10 +26,7 @@ while running:
             game_input.handle_click(event.pos)
 
     draw_board(screen, board_img)
-    
-    # Dibuja selecciones y movimientos válidos
     draw_selection(screen, game_input.selected_piece, game_input.valid_moves)
-    
     draw_pieces(screen, board, piece_images)
 
     pygame.display.flip()

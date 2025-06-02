@@ -22,6 +22,50 @@ class Piece:
         return 0 <= row < 8 and 0 <= col < 8 and (
             not board.grid[row][col] or board.grid[row][col].color != self.color
         )
+    
+    def _get_diagonal_moves(self, board):
+        row, col = self.pos
+        moves = []
+        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        
+        for dr, dc in directions:
+            for i in range(1, 8):
+                r, c = row + i*dr, col + i*dc
+                if not (0 <= r < 8 and 0 <= c < 8):
+                    break
+                
+                target = board.grid[r][c]
+                if not target:
+                    moves.append((r, c))
+                elif target.color != self.color:
+                    moves.append((r, c))
+                    break
+                else:
+                    break
+        
+        return moves
+    
+    def _get_straight_moves(self, board):
+        row, col = self.pos
+        moves = []
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        
+        for dr, dc in directions:
+            for i in range(1, 8):
+                r, c = row + i*dr, col + i*dc
+                if not (0 <= r < 8 and 0 <= c < 8):
+                    break
+                
+                target = board.grid[r][c]
+                if not target:
+                    moves.append((r, c))
+                elif target.color != self.color:
+                    moves.append((r, c))
+                    break
+                else:
+                    break
+        
+        return moves
 
 
 class Pawn(Piece):
@@ -71,7 +115,8 @@ class Bishop(Piece):
         super().__init__("bishop", color, pos)
 
     def get_valid_moves(self, board):
-        return self._get_diagonal_moves(board)
+        moves = self._get_diagonal_moves(board)
+        return self.filter_valid_moves(moves, board)
 
 
 class Rook(Piece):
@@ -79,7 +124,8 @@ class Rook(Piece):
         super().__init__("rook", color, pos)
 
     def get_valid_moves(self, board):
-        return self._get_straight_moves(board)
+        moves = self._get_straight_moves(board)
+        return self.filter_valid_moves(moves, board)
 
 
 class Queen(Piece):
@@ -87,7 +133,10 @@ class Queen(Piece):
         super().__init__("queen", color, pos)
 
     def get_valid_moves(self, board):
-        return self._get_straight_moves(board) + self._get_diagonal_moves(board)
+        diagonal = self._get_diagonal_moves(board)
+        straight = self._get_straight_moves(board)
+        moves = diagonal + straight
+        return self.filter_valid_moves(moves, board)
 
 
 class King(Piece):
